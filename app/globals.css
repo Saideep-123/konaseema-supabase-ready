@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-inter);
+  /* Premium light background + centered brand watermark (fixed while scrolling) */
+  background-color: #fffaf2;
+  background-image:
+    linear-gradient(rgba(255, 250, 242, 0.92), rgba(255, 250, 242, 0.92)),
+    url('/brand-watermark.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  background-size: min(720px, 80vw) auto;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-playfair);
+}
+
+.brand-logo {
+  font-family: var(--font-greatvibes);
+}
+
+.premium-card {
+  background: #fffaf2;
+  border: 1px solid #c9a45c;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-6px);
+}
+
+.btn-primary {
+  background: #1f3a2a;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.98);
+}
