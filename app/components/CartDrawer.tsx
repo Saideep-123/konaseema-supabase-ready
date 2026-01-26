@@ -28,7 +28,9 @@ export default function CartDrawer() {
       .filter(Boolean)
       .join("\n");
 
-    return `Hi Konaseema Foods, I want to order:\n\n${lines.join("\n")}\n\nTotal: ₹${cart.total}${customer ? "\n\n" + customer : ""}`;
+    return `Hi Konaseema Foods, I want to order:\n\n${lines.join(
+      "\n"
+    )}\n\nTotal: ₹${cart.total}${customer ? "\n\n" + customer : ""}`;
   };
 
   const waLink = useMemo(
@@ -39,6 +41,7 @@ export default function CartDrawer() {
 
   const checkout = async () => {
     if (cart.items.length === 0) return;
+
     setSaveStatus(null);
     setSaving(true);
 
@@ -62,15 +65,16 @@ export default function CartDrawer() {
           channel: "whatsapp",
         };
 
-        const { error } = await supabase.from("orders").insert(payload);
+        // IMPORTANT: supabase insert expects an array of rows
+        const { error } = await supabase.from("orders").insert([payload]);
         if (error) setSaveStatus(`Could not save order to DB: ${error.message}`);
-      } catch (e: any) {
-        setSaveStatus(`Could not save order to DB.`);
+      } catch {
+        setSaveStatus("Could not save order to DB.");
       }
     }
 
     setSaving(false);
-    window.open(waLink, "_blank");
+    window.open(waLink, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -80,17 +84,20 @@ export default function CartDrawer() {
     >
       {/* overlay */}
       <div
-        className={`absolute inset-0 bg-black/40 transition-opacity ${cart.isOpen ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 bg-black/40 transition-opacity ${
+          cart.isOpen ? "opacity-100" : "opacity-0"
+        }`}
         onClick={cart.close}
       />
 
       {/* panel */}
       <div
-        className={`absolute right-0 top-0 h-full w-full sm:w-[420px] bg-[#fffaf2] border-l border-gold shadow-2xl transition-transform ${
+        className={`absolute right-0 top-0 h-full w-full sm:w-[420px] bg-[#fffaf2] border-l border-gold shadow-2xl transition-transform flex flex-col ${
           cart.isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gold">
+        {/* header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gold shrink-0">
           <div>
             <h3 className="text-2xl">Your Cart</h3>
             <p className="opacity-75 text-sm">{cart.count} item(s)</p>
@@ -100,14 +107,19 @@ export default function CartDrawer() {
           </button>
         </div>
 
-        <div className="p-6 space-y-4 overflow-auto h-[calc(100%-220px)]">
+        {/* scrollable content */}
+        <div className="p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
           {cart.items.length === 0 ? (
             <div className="opacity-70">Your cart is empty.</div>
           ) : (
             cart.items.map((i) => (
               <div key={i.id} className="premium-card p-4">
                 <div className="flex gap-4">
-                  <img src={i.image} className="w-16 h-16 rounded-lg object-cover" alt={i.name} />
+                  <img
+                    src={i.image}
+                    className="w-16 h-16 rounded-lg object-cover"
+                    alt={i.name}
+                  />
                   <div className="flex-1">
                     <div className="flex justify-between gap-4">
                       <div>
@@ -119,15 +131,26 @@ export default function CartDrawer() {
 
                     <div className="mt-3 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <button className="px-3 py-1 border border-gold rounded-full" onClick={() => cart.dec(i.id)}>
+                        <button
+                          className="px-3 py-1 border border-gold rounded-full"
+                          onClick={() => cart.dec(i.id)}
+                        >
                           -
                         </button>
-                        <span className="min-w-[24px] text-center font-semibold">{i.qty}</span>
-                        <button className="px-3 py-1 border border-gold rounded-full" onClick={() => cart.inc(i.id)}>
+                        <span className="min-w-[24px] text-center font-semibold">
+                          {i.qty}
+                        </span>
+                        <button
+                          className="px-3 py-1 border border-gold rounded-full"
+                          onClick={() => cart.inc(i.id)}
+                        >
                           +
                         </button>
                       </div>
-                      <button className="text-sm underline opacity-80 hover:opacity-100" onClick={() => cart.remove(i.id)}>
+                      <button
+                        className="text-sm underline opacity-80 hover:opacity-100"
+                        onClick={() => cart.remove(i.id)}
+                      >
                         Remove
                       </button>
                     </div>
@@ -136,38 +159,45 @@ export default function CartDrawer() {
               </div>
             ))
           )}
-        </div>
 
-        <div className="px-6 py-5 border-t border-gold">
-          <div className="mb-4 space-y-2">
-            <div className="text-sm font-semibold">Customer details (optional)</div>
-            <input
-              className="w-full px-3 py-2 rounded-xl border border-gold bg-white/70 outline-none"
-              placeholder="Your name"
-              value={customerName}
-              onChange={(e) => setCustomerName(e.target.value)}
-            />
-            <input
-              className="w-full px-3 py-2 rounded-xl border border-gold bg-white/70 outline-none"
-              placeholder="Phone (for delivery updates)"
-              value={customerPhone}
-              onChange={(e) => setCustomerPhone(e.target.value)}
-            />
-            <textarea
-              className="w-full px-3 py-2 rounded-xl border border-gold bg-white/70 outline-none min-h-[70px]"
-              placeholder="Delivery address"
-              value={customerAddress}
-              onChange={(e) => setCustomerAddress(e.target.value)}
-            />
+          {/* customer details moved inside scroll area so it never gets cut */}
+          <div className="premium-card p-4">
+            <div className="text-sm font-semibold mb-2">
+              Customer details (optional)
+            </div>
+
+            <div className="space-y-2">
+              <input
+                className="w-full px-3 py-2 rounded-xl border border-gold bg-white/70 outline-none"
+                placeholder="Your name"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+              />
+              <input
+                className="w-full px-3 py-2 rounded-xl border border-gold bg-white/70 outline-none"
+                placeholder="Phone (for delivery updates)"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+              />
+              <textarea
+                className="w-full px-3 py-2 rounded-xl border border-gold bg-white/70 outline-none min-h-[70px]"
+                placeholder="Delivery address"
+                value={customerAddress}
+                onChange={(e) => setCustomerAddress(e.target.value)}
+              />
+            </div>
 
             {!auth.user && (
-              <div className="text-xs opacity-70">
+              <div className="text-xs opacity-70 mt-2">
                 Login to save your order in the database (guest checkout still works).
               </div>
             )}
-            {saveStatus && <div className="text-xs opacity-80">{saveStatus}</div>}
+            {saveStatus && <div className="text-xs opacity-80 mt-2">{saveStatus}</div>}
           </div>
+        </div>
 
+        {/* sticky footer */}
+        <div className="px-6 py-5 border-t border-gold shrink-0 bg-[#fffaf2]">
           <div className="flex justify-between text-lg mb-4">
             <span className="opacity-80">Total</span>
             <span className="font-bold">₹{cart.total}</span>
@@ -177,12 +207,16 @@ export default function CartDrawer() {
             <button
               className="btn-primary w-full"
               onClick={checkout}
-              disabled={saving}
+              disabled={saving || cart.items.length === 0}
             >
               {saving ? "Saving…" : "Checkout on WhatsApp"}
             </button>
 
-            <button className="btn-primary w-full bg-[#3b2417] hover:bg-[#2d1a10]" onClick={cart.clear}>
+            <button
+              className="btn-primary w-full bg-[#3b2417] hover:bg-[#2d1a10]"
+              onClick={cart.clear}
+              disabled={saving || cart.items.length === 0}
+            >
               Clear
             </button>
           </div>
