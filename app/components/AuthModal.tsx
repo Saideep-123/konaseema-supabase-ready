@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { useAuth } from "./AuthContext";
 
@@ -16,12 +16,22 @@ export default function AuthModal({
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
 
-  const [name, setName] = useState(""); // optional, used on signup
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
-  // lock background scroll when modal open
+  // Drag state (x,y in px)
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const dragRef = useRef<{
+    dragging: boolean;
+    startX: number;
+    startY: number;
+    baseX: number;
+    baseY: number;
+  }>({ dragging: false, startX: 0, startY: 0, baseX: 0, baseY: 0 });
+
+  // Lock background scroll when modal open
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -31,26 +41,28 @@ export default function AuthModal({
     };
   }, [open]);
 
-  // when user becomes available, close modal
+  // Reset form + position on open/close
   useEffect(() => {
-    if (open && auth.user) {
-      setBusy(false);
-      setMsg(null);
-      onClose();
-    }
+    if (!open) return;
+    setMode("login");
+    setEmail("");
+    setPassword("");
+    setName("");
+    setBusy(false);
+    setMsg(null);
+    setPos({ x: 0, y: 0 }); // centered position
+  }, [open]);
+
+  // Close modal after successful login (auth.user becomes available)
+  useEffect(() => {
+    if (open && auth.user) onClose();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth.user]);
 
-  useEffect(() => {
-    if (!open) {
-      setMsg(null);
-      setBusy(false);
-      setEmail("");
-      setPassword("");
-      setName("");
-      setMode("login");
-    }
-  }, [open]);
+  const title = useMemo(
+    () => (mode === "login" ? "Login" : "Create account"),
+    [mode]
+  );
 
   if (!open) return null;
 
@@ -59,7 +71,6 @@ export default function AuthModal({
     setBusy(true);
 
     const cleanEmail = email.trim().toLowerCase();
-
     if (!cleanEmail || !password) {
       setBusy(false);
       setMsg("Please enter email and password.");
@@ -69,47 +80,81 @@ export default function AuthModal({
     if (mode === "signup") {
       const res = await auth.signUp(cleanEmail, password, name.trim() || undefined);
       setBusy(false);
-
       if (!res.ok) {
         setMsg(res.error || "Signup failed.");
         return;
       }
-
-      // If your Supabase requires email confirmation, user won't be logged in immediately.
-      // So we keep modal open and guide user.
+      // If email confirmation is ON, user may not be logged in immediately:
       if (!auth.user) {
-        setMsg("Signup successful. Please check your email to confirm, then login.");
+        setMsg("Signup successful. Check your email to confirm, then login.");
         setMode("login");
       }
       return;
     }
 
-    // login
     const res = await auth.signIn(cleanEmail, password);
     setBusy(false);
+    if (!res.ok) setMsg(res.error || "Invalid credentials.");
+  };
 
-    if (!res.ok) {
-      setMsg(res.error || "Invalid credentials.");
-      return;
-    }
+  // Drag handlers (mouse + touch via pointer events)
+  const onDragStart = (e: React.PointerEvent) => {
+    // only left click / primary touch
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    dragRef.current.dragging = true;
+    dragRef.current.startX = e.clientX;
+    dragRef.current.startY = e.clientY;
+    dragRef.current.baseX = pos.x;
+    dragRef.current.baseY = pos.y;
+  };
+
+  const onDragMove = (e: React.PointerEvent) => {
+    if (!dragRef.current.dragging) return;
+
+    const dx = e.clientX - dragRef.current.startX;
+    const dy = e.clientY - dragRef.current.startY;
+
+    // simple clamp so it doesn’t disappear off-screen too easily
+    const nextX = dragRef.current.baseX + dx;
+    const nextY = dragRef.current.baseY + dy;
+
+    setPos({
+      x: Math.max(-320, Math.min(320, nextX)),
+      y: Math.max(-420, Math.min(420, nextY)),
+    });
+  };
+
+  const onDragEnd = () => {
+    dragRef.current.dragging = false;
   };
 
   return (
     <div className="fixed inset-0 z-[9999]">
       {/* overlay */}
-      <div
-        className="absolute inset-0 bg-black/50"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-      {/* centered modal */}
+      {/* centered wrapper */}
       <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="w-full max-w-md rounded-2xl bg-[#fffaf2] border border-gold shadow-2xl">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-gold">
-            <div className="text-lg font-semibold">
-              {mode === "login" ? "Login" : "Create account"}
-            </div>
-            <button onClick={onClose} aria-label="Close">
+        {/* draggable modal */}
+        <div
+          className="w-full max-w-md rounded-2xl bg-[#fffaf2] border border-gold shadow-2xl"
+          style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
+        >
+          {/* drag handle header */}
+          <div
+            className="flex items-center justify-between px-5 py-4 border-b border-gold cursor-move select-none"
+            onPointerDown={onDragStart}
+            onPointerMove={onDragMove}
+            onPointerUp={onDragEnd}
+            onPointerCancel={onDragEnd}
+          >
+            <div className="text-lg font-semibold">{title}</div>
+            <button
+              onClick={onClose}
+              aria-label="Close"
+              className="cursor-pointer"
+              type="button"
+            >
               <X />
             </button>
           </div>
@@ -141,17 +186,9 @@ export default function AuthModal({
               autoComplete={mode === "login" ? "current-password" : "new-password"}
             />
 
-            {msg && (
-              <div className="text-sm opacity-80">
-                {msg}
-              </div>
-            )}
+            {msg && <div className="text-sm opacity-80">{msg}</div>}
 
-            <button
-              className="btn-primary w-full"
-              onClick={submit}
-              disabled={busy}
-            >
+            <button className="btn-primary w-full" onClick={submit} disabled={busy}>
               {busy ? "Please wait…" : mode === "login" ? "Login" : "Sign up"}
             </button>
 
@@ -185,6 +222,10 @@ export default function AuthModal({
                   </button>
                 </>
               )}
+            </div>
+
+            <div className="text-xs opacity-60 text-center">
+              Tip: drag the top bar to move this window.
             </div>
           </div>
         </div>
