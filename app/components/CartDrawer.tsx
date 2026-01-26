@@ -40,30 +40,53 @@ export default function CartDrawer() {
   );
 
   const checkout = async () => {
-    if (cart.items.length === 0) return;
+  if (cart.items.length === 0) return;
 
-    setSaveStatus(null);
-    setSaving(true);
+  setSaveStatus(null);
+  setSaving(true);
 
-    // Save order only for logged-in users (guest checkout still works via WhatsApp)
-    if (auth.user) {
-      try {
-        const payload = {
-          user_id: auth.user.id,
-          customer_name: customerName || null,
-          customer_phone: customerPhone || null,
-          customer_address: customerAddress || null,
-          total: cart.total,
-          items: cart.items.map((i) => ({
-            id: i.id,
-            name: i.name,
-            weight: i.weight,
-            price: i.price,
-            qty: i.qty,
-            category: i.category,
-          })),
-          channel: "whatsapp",
-        };
+  // Build payload once
+  const payload = auth.user
+    ? {
+        user_id: auth.user.id,
+        customer_name: customerName || null,
+        customer_phone: customerPhone || null,
+        customer_address: customerAddress || null,
+        total: cart.total,
+        items: cart.items.map((i) => ({
+          id: i.id,
+          name: i.name,
+          weight: i.weight,
+          price: i.price,
+          qty: i.qty,
+          category: i.category,
+        })),
+        channel: "whatsapp",
+      }
+    : null;
+
+  // Try saving only if logged in
+  if (payload) {
+    try {
+      const { error } = await supabase.from("orders").insert([payload]); // must be array
+      if (error) {
+        // show exact reason
+        setSaveStatus(`DB save failed: ${error.message}`);
+      } else {
+        setSaveStatus("Order saved ✅");
+      }
+    } catch {
+      setSaveStatus("DB save failed: unknown error");
+    }
+  } else {
+    setSaveStatus("Not logged in → order will not be saved to DB.");
+  }
+
+  setSaving(false);
+
+  // WhatsApp opens anyway (as you wanted)
+  window.open(waLink, "_blank", "noopener,noreferrer");
+};
 
         // IMPORTANT: supabase insert expects an array of rows
         const { error } = await supabase.from("orders").insert([payload]);
