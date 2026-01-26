@@ -33,7 +33,8 @@ export default function Navbar() {
   }, [auth.user]);
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-md bg-cream/90 border-b border-gold">
+    <nav className="sticky top-0 z-50 bg-cream/90 border-b border-gold">
+
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         <button
           className="brand-logo text-3xl text-brown"
