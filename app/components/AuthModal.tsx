@@ -1,76 +1,192 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { useMemo, useState } from "react";
 import { useAuth } from "./AuthContext";
 
-export default function AuthModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function AuthModal({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
   const auth = useAuth();
+
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<string | null>(null);
-  const title = useMemo(() => (mode === "login" ? "Login" : "Create account"), [mode]);
+
+  const [name, setName] = useState(""); // optional, used on signup
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  // lock background scroll when modal open
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
+  // when user becomes available, close modal
+  useEffect(() => {
+    if (open && auth.user) {
+      setBusy(false);
+      setMsg(null);
+      onClose();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auth.user]);
+
+  useEffect(() => {
+    if (!open) {
+      setMsg(null);
+      setBusy(false);
+      setEmail("");
+      setPassword("");
+      setName("");
+      setMode("login");
+    }
+  }, [open]);
 
   if (!open) return null;
 
   const submit = async () => {
-    setStatus(null);
-    if (!email || !password) {
-      setStatus("Please enter email and password.");
+    setMsg(null);
+    setBusy(true);
+
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (!cleanEmail || !password) {
+      setBusy(false);
+      setMsg("Please enter email and password.");
       return;
     }
-    const res = mode === "login" ? await auth.signIn(email, password) : await auth.signUp(email, password);
+
+    if (mode === "signup") {
+      const res = await auth.signUp(cleanEmail, password, name.trim() || undefined);
+      setBusy(false);
+
+      if (!res.ok) {
+        setMsg(res.error || "Signup failed.");
+        return;
+      }
+
+      // If your Supabase requires email confirmation, user won't be logged in immediately.
+      // So we keep modal open and guide user.
+      if (!auth.user) {
+        setMsg("Signup successful. Please check your email to confirm, then login.");
+        setMode("login");
+      }
+      return;
+    }
+
+    // login
+    const res = await auth.signIn(cleanEmail, password);
+    setBusy(false);
+
     if (!res.ok) {
-      setStatus(res.error ?? "Something went wrong.");
+      setMsg(res.error || "Invalid credentials.");
       return;
     }
-    setStatus(mode === "login" ? "Logged in." : "Account created. You are now logged in.");
-    onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-[60]">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="absolute left-1/2 top-1/2 w-[92vw] max-w-md -translate-x-1/2 -translate-y-1/2 premium-card p-6">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h3 className="text-2xl">{title}</h3>
-            <p className="text-sm opacity-70 mt-1">Email + password authentication</p>
+    <div className="fixed inset-0 z-[9999]">
+      {/* overlay */}
+      <div
+        className="absolute inset-0 bg-black/50"
+        onClick={onClose}
+      />
+
+      {/* centered modal */}
+      <div className="absolute inset-0 flex items-center justify-center p-4">
+        <div className="w-full max-w-md rounded-2xl bg-[#fffaf2] border border-gold shadow-2xl">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gold">
+            <div className="text-lg font-semibold">
+              {mode === "login" ? "Login" : "Create account"}
+            </div>
+            <button onClick={onClose} aria-label="Close">
+              <X />
+            </button>
           </div>
-          <button onClick={onClose} aria-label="Close">
-            <X />
-          </button>
-        </div>
 
-        <div className="mt-5 space-y-3">
-          <input
-            className="w-full px-4 py-3 rounded-xl border border-gold bg-white/70 outline-none"
-            placeholder="Email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            className="w-full px-4 py-3 rounded-xl border border-gold bg-white/70 outline-none"
-            placeholder="Password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="p-5 space-y-3">
+            {mode === "signup" && (
+              <input
+                className="w-full px-3 py-2 rounded-xl border border-gold bg-white/70 outline-none"
+                placeholder="Name (optional)"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            )}
 
-          {status && <div className="text-sm opacity-80">{status}</div>}
+            <input
+              className="w-full px-3 py-2 rounded-xl border border-gold bg-white/70 outline-none"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+            />
 
-          <button className="btn-primary w-full" onClick={submit}>
-            {mode === "login" ? "Login" : "Sign up"}
-          </button>
+            <input
+              className="w-full px-3 py-2 rounded-xl border border-gold bg-white/70 outline-none"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              autoComplete={mode === "login" ? "current-password" : "new-password"}
+            />
 
-          <button
-            className="w-full text-sm underline opacity-80 hover:opacity-100"
-            onClick={() => setMode((m) => (m === "login" ? "signup" : "login"))}
-          >
-            {mode === "login" ? "New here? Create an account" : "Already have an account? Login"}
-          </button>
+            {msg && (
+              <div className="text-sm opacity-80">
+                {msg}
+              </div>
+            )}
+
+            <button
+              className="btn-primary w-full"
+              onClick={submit}
+              disabled={busy}
+            >
+              {busy ? "Please wait…" : mode === "login" ? "Login" : "Sign up"}
+            </button>
+
+            <div className="text-sm opacity-80 text-center">
+              {mode === "login" ? (
+                <>
+                  Don’t have an account?{" "}
+                  <button
+                    className="underline"
+                    onClick={() => {
+                      setMsg(null);
+                      setMode("signup");
+                    }}
+                    type="button"
+                  >
+                    Sign up
+                  </button>
+                </>
+              ) : (
+                <>
+                  Already have an account?{" "}
+                  <button
+                    className="underline"
+                    onClick={() => {
+                      setMsg(null);
+                      setMode("login");
+                    }}
+                    type="button"
+                  >
+                    Login
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
