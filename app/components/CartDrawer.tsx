@@ -39,66 +39,57 @@ export default function CartDrawer() {
     [cart.items, cart.total, customerName, customerPhone, customerAddress]
   );
 
-  const checkout = async () => {
+const checkout = async () => {
   if (cart.items.length === 0) return;
 
   setSaveStatus(null);
   setSaving(true);
 
-  // Build payload once
-  const payload = auth.user
-    ? {
-        user_id: auth.user.id,
-        customer_name: customerName || null,
-        customer_phone: customerPhone || null,
-        customer_address: customerAddress || null,
-        total: cart.total,
-        items: cart.items.map((i) => ({
-          id: i.id,
-          name: i.name,
-          weight: i.weight,
-          price: i.price,
-          qty: i.qty,
-          category: i.category,
-        })),
-        channel: "whatsapp",
-      }
-    : null;
-
-  // Try saving only if logged in
-  if (payload) {
-    try {
-      const { error } = await supabase.from("orders").insert([payload]); // must be array
-      if (error) {
-        // show exact reason
-        setSaveStatus(`DB save failed: ${error.message}`);
-      } else {
-        setSaveStatus("Order saved ✅");
-      }
-    } catch {
-      setSaveStatus("DB save failed: unknown error");
-    }
-  } else {
-    setSaveStatus("Not logged in → order will not be saved to DB.");
-  }
-
-  setSaving(false);
-
-  // WhatsApp opens anyway (as you wanted)
-  window.open(waLink, "_blank", "noopener,noreferrer");
-};
-
-        // IMPORTANT: supabase insert expects an array of rows
-        const { error } = await supabase.from("orders").insert([payload]);
-        if (error) setSaveStatus(`Could not save order to DB: ${error.message}`);
-      } catch {
-        setSaveStatus("Could not save order to DB.");
-      }
-    }
-
+  // If not logged in, we skip DB and go WhatsApp (your choice)
+  if (!auth.user) {
     setSaving(false);
     window.open(waLink, "_blank", "noopener,noreferrer");
-  };
+    return;
+  }
+
+  // Logged in → must attempt DB save
+  try {
+    const payload = {
+      user_id: auth.user.id,
+      customer_name: customerName || null,
+      customer_phone: customerPhone || null,
+      customer_address: customerAddress || null,
+      total: cart.total,
+      items: cart.items.map((i) => ({
+        id: i.id,
+        name: i.name,
+        weight: i.weight,
+        price: i.price,
+        qty: i.qty,
+        category: i.category,
+      })),
+      channel: "whatsapp",
+    };
+
+    const { error } = await supabase.from("orders").insert([payload]);
+
+    if (error) {
+      // ✅ STOP here so you can see it in the cart UI
+      setSaveStatus(`DB save failed: ${error.message}`);
+      setSaving(false);
+      return;
+    }
+
+    setSaveStatus("Order saved ✅ Redirecting to WhatsApp…");
+    setSaving(false);
+
+    // ✅ Only now open WhatsApp
+    window.open(waLink, "_blank", "noopener,noreferrer");
+  } catch {
+    setSaveStatus("DB save failed: unknown error");
+    setSaving(false);
+  }
+};
 
   return (
     <div
