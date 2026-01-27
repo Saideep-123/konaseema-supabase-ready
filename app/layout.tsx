@@ -13,7 +13,7 @@ const greatVibes = Great_Vibes({
 });
 
 export const metadata: Metadata = {
-  title: "Konaseema Foods",
+  title: "Konaseema Specials",
   description: "Authentic Konaseema sweets & snacks",
 };
 
