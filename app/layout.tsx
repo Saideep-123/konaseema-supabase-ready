@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display, Great_Vibes } from "next/font/google";
 import Providers from "./providers";
 
-/* Fonts */
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -23,7 +22,6 @@ const greatVibes = Great_Vibes({
   display: "swap",
 });
 
-/* Metadata */
 export const metadata: Metadata = {
   title: "Konaseema Foods",
   description: "Authentic Konaseema sweets & snacks",
@@ -39,14 +37,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} ${greatVibes.variable} bg-cream text-brown`}
       >
-        {/* 🌿 Premium background + watermark */}
         <div className="site-bg">
-          {/* 🌤 Bright overlay so UI is NOT dull */}
           <div className="site-overlay">
-            {/* 🔐 Context Providers (REQUIRED) */}
-            <Providers>
-              {children}
-            </Providers>
+            <Providers>{children}</Providers>
           </div>
         </div>
       </body>
