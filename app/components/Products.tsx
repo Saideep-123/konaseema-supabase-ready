@@ -2,6 +2,8 @@
 
 import { PRODUCTS } from "./data";
 import { useCart } from "./CartContext";
+import { useState } from "react";
+import ProductQuickView from "./ProductQuickView";
 
 type Props = {
   activeCategory: string;
@@ -9,11 +11,18 @@ type Props = {
 
 export default function Products({ activeCategory }: Props) {
   const cart = useCart();
+  const [open, setOpen] = useState(false);
+  const [selected, setSelected] = useState<any>(null);
 
   const list =
     activeCategory === "All"
       ? PRODUCTS
       : PRODUCTS.filter((p) => p.category === activeCategory);
+
+  const openQuick = (p: any) => {
+    setSelected(p);
+    setOpen(true);
+  };
 
   return (
     <section id="products" className="px-6 pb-20">
@@ -33,9 +42,13 @@ export default function Products({ activeCategory }: Props) {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {list.map((p) => (
-            <div key={p.id} className="premium-card overflow-hidden flex flex-col">
+            <div
+              key={p.id}
+              className="premium-card overflow-hidden flex flex-col cursor-pointer"
+              onClick={() => openQuick(p)}
+            >
               {/* Image */}
               <div className="relative w-full aspect-[4/3] overflow-hidden bg-cream">
                 <img
@@ -62,24 +75,17 @@ export default function Products({ activeCategory }: Props) {
 
                 <div className="opacity-75 mt-1 text-sm">{p.weight}</div>
 
-                {/* Buttons */}
-                <div className="mt-4 grid grid-cols-2 gap-3">
+                {/* Button */}
+                <div className="mt-4">
                   <button
-                    className="btn-primary py-2 px-4 rounded-xl text-sm"
-                    onClick={() => cart.add(p)}
+                    className="btn-primary py-2 px-4 rounded-xl text-sm w-full"
+                    onClick={(e) => {
+                      e.stopPropagation(); // IMPORTANT
+                      cart.add(p);
+                    }}
                   >
                     Add to Cart
                   </button>
-
-                  <a
-                    className="btn-primary py-2 px-4 rounded-xl text-sm bg-green-700 hover:bg-green-800 text-center"
-                    target="_blank"
-                    href={`https://wa.me/917989301401?text=${encodeURIComponent(
-                      `Hi Konaseema Foods, I want to order: ${p.name} (${p.weight}) - ₹${p.price}`
-                    )}`}
-                  >
-                    WhatsApp
-                  </a>
                 </div>
               </div>
             </div>
@@ -92,6 +98,16 @@ export default function Products({ activeCategory }: Props) {
           </div>
         )}
       </div>
+
+      {/* Quick View */}
+      <ProductQuickView
+        open={open}
+        product={selected}
+        onClose={() => setOpen(false)}
+        onAdd={(qty) => {
+          for (let i = 0; i < qty; i++) cart.add(selected);
+        }}
+      />
     </section>
   );
 }
