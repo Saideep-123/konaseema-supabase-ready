@@ -15,16 +15,37 @@ export const metadata: Metadata = {
   title: "Konaseema Foods",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
       className={`${inter.variable} ${playfair.variable} ${greatVibes.variable}`}
     >
       <body
-        className="bg-[#fffaf2] text-[#2b1a12]"
+        style={{
+          backgroundColor: "#FFF8EE",
+          color: "#2B1A12",
+          opacity: 1,
+          filter: "none",
+        }}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          {/* HARD RESET WRAPPER */}
+          <div
+            style={{
+              minHeight: "100vh",
+              backgroundColor: "#FFF8EE",
+              opacity: 1,
+              filter: "none",
+            }}
+          >
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );
