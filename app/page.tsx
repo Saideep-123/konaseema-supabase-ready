@@ -9,25 +9,26 @@ import About from "./components/About";
 import Footer from "./components/Footer";
 import CartDrawer from "./components/CartDrawer";
 
-export default function HomePage() {
+export default function Home() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <>
       <Navbar />
-
-      {/* ✅ Dominant first-screen section */}
-      <Hero />
-
-      {/* ✅ Everything starts below the fold */}
-      <main className="pt-6">
-        <Categories active={activeCategory} setActive={setActiveCategory} />
-        <Products activeCategory={activeCategory} />
-        <About />
-      </main>
-
-      <Footer />
       <CartDrawer />
+      <main>
+        <Hero />
+        <Categories
+          active={activeCategory}
+          setActive={setActiveCategory}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
+        <Products activeCategory={activeCategory} searchQuery={searchQuery} />
+        <About />
+        <Footer />
+      </main>
     </>
   );
 }
