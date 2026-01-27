@@ -2,51 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
-html { scroll-behavior: smooth; }
-
+/* Base */
 body {
-  font-family: var(--font-inter);
-  /* Premium light background + centered brand watermark (fixed while scrolling) */
   background-color: #fffaf2;
   background-image:
-    linear-gradient(rgba(255, 250, 242, 0.92), rgba(255, 250, 242, 0.92)),
-    url('/brand-watermark.png');
+    radial-gradient(1200px 600px at 10% 0%, rgba(212,175,55,0.16), transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, rgba(16,185,129,0.12), transparent 55%),
+    radial-gradient(900px 500px at 50% 100%, rgba(59,130,246,0.10), transparent 60%);
+  background-attachment: fixed;
+  color: #2d1a10;
+}
+
+/* Logo watermark */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("/logo.png");
   background-repeat: no-repeat;
   background-position: center;
-  background-attachment: fixed;
-  background-size: min(720px, 80vw) auto;
+  background-size: 520px;
+  opacity: 0.06;
+  z-index: 0;
 }
 
-h1, h2, h3 {
-  font-family: var(--font-playfair);
+/* Ensure content stays above watermark */
+#__next,
+main,
+nav,
+section,
+footer {
+  position: relative;
+  z-index: 1;
 }
 
-.brand-logo {
-  font-family: var(--font-greatvibes);
-}
-
+/* Reusable styles */
 .premium-card {
-  background: #fffaf2;
-  border: 1px solid #c9a45c;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
-}
-
-.premium-card:hover {
-  transform: translateY(-6px);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  border-radius: 1rem;
 }
 
 .btn-primary {
-  background: #1f3a2a;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 14px;
+  background: #d4af37;
+  color: #2d1a10;
   font-weight: 600;
-  transition: all 0.25s ease;
+  border-radius: 9999px;
+  padding: 0.6rem 1.2rem;
+  transition: all 0.2s ease;
 }
-
 .btn-primary:hover {
-  transform: translateY(-2px);
-  filter: brightness(0.98);
+  background: #c19a2e;
 }
