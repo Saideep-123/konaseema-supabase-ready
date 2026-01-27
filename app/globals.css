@@ -2,48 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
-body {
+body{
   font-family: var(--font-inter);
+  background: #fffdf6; /* very bright cream */
+  color: #1a120c;
 }
 
 /* Headings */
-h1, h2, h3 {
-  font-family: var(--font-playfair);
+h1,h2,h3{ font-family: var(--font-playfair); }
+.brand-logo{ font-family: var(--font-greatvibes); }
+
+/* REMOVE any old dulling layer if it exists */
+.site-bg,
+.site-overlay{
+  background: transparent !important;
+  opacity: 1 !important;
+  filter: none !important;
+  backdrop-filter: none !important;
 }
 
-/* Brand logo */
-.brand-logo {
-  font-family: var(--font-greatvibes);
+/* Cards */
+.premium-card{
+  background:#ffffff;
+  border:1px solid #c9a45c;
+  border-radius:16px;
+  box-shadow:0 16px 40px rgba(0,0,0,.14);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.premium-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 50px rgba(0,0,0,.18);
 }
 
-/* Premium cards */
-.premium-card {
-  background: #ffffff;
-  border: 1px solid #c9a45c;
-  border-radius: 16px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
-  transition: all 0.3s ease;
+/* Buttons */
+.btn-primary{
+  background:#1f3a2a;
+  color:#fff;
+  padding:12px 18px;
+  border-radius:14px;
+  font-weight:700;
+  transition:transform .2s ease, filter .2s ease;
 }
-
-.premium-card:hover {
-  transform: translateY(-4px);
-}
-
-/* Primary buttons */
-.btn-primary {
-  background: #1f3a2a;
-  color: white;
-  padding: 10px 16px;
-  border-radius: 14px;
-  font-weight: 600;
-  transition: all 0.25s ease;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.05);
+.btn-primary:hover{
+  transform:translateY(-1px);
+  filter:brightness(1.08);
 }
