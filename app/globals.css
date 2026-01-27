@@ -8,14 +8,11 @@ html {
 
 body {
   font-family: var(--font-inter);
-  background-color: #F8F5F0; /* cream */
-  color: #1C1C1C;           /* charcoal */
 }
 
 /* Headings */
 h1, h2, h3 {
   font-family: var(--font-playfair);
-  color: #1C1C1C;
 }
 
 /* Brand logo */
@@ -23,36 +20,30 @@ h1, h2, h3 {
   font-family: var(--font-greatvibes);
 }
 
-/* Premium card (DO NOT redesign, only recolor) */
+/* Premium cards */
 .premium-card {
-  background: #FFFFFF;             /* bright card */
-  border: 1px solid #B08D57;       /* gold border */
+  background: #ffffff;
+  border: 1px solid #c9a45c;
   border-radius: 16px;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
 }
 
 .premium-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.16);
 }
 
-/* Primary button */
+/* Primary buttons */
 .btn-primary {
-  background: #1C1C1C;   /* charcoal */
-  color: #FFFFFF;
+  background: #1f3a2a;
+  color: white;
   padding: 10px 16px;
   border-radius: 14px;
   font-weight: 600;
-  transition: transform 0.2s ease, filter 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
-}
-
-/* Muted text utility (optional, safe) */
-.text-muted {
-  color: #2B2B2B;
 }
