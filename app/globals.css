@@ -2,30 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
-/* 🔥 THIS IS THE IMPORTANT PART */
 body {
   font-family: var(--font-inter);
-  background-color: #ffffff; /* PURE WHITE like old site */
-  color: #2b1a12;            /* same brown text as old site */
+  /* ✅ DO NOT set background/color here
+     Old site used Tailwind bg-cream + text-brown from layout.tsx */
 }
 
-/* Headings */
 h1, h2, h3 {
   font-family: var(--font-playfair);
 }
 
-/* Brand logo */
 .brand-logo {
   font-family: var(--font-greatvibes);
 }
 
-/* Cards — same as old site */
 .premium-card {
-  background: #ffffff;
+  background: #fffaf2;
   border: 1px solid #c9a45c;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
@@ -36,7 +30,6 @@ h1, h2, h3 {
   transform: translateY(-6px);
 }
 
-/* Buttons */
 .btn-primary {
   background: #1f3a2a;
   color: white;
@@ -48,5 +41,5 @@ h1, h2, h3 {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  filter: brightness(1.05);
+  filter: brightness(0.98);
 }
