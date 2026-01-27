@@ -1,80 +1,69 @@
 "use client";
 
-import { MessageCircle, ShoppingCart, User } from "lucide-react";
+import { MessageCircle, ShoppingCart } from "lucide-react";
 import { useCart } from "./CartContext";
 import { useAuth } from "./AuthContext";
 import AuthModal from "./AuthModal";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState, useEffect } from "react";
 
 export default function Navbar() {
   const cart = useCart();
   const auth = useAuth();
+
   const [authOpen, setAuthOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  // Display name: metadata name -> email prefix -> full email -> "Account"
   const displayName = useMemo(() => {
-    const user = auth.user;
-    if (!user) return "";
+    if (!auth.user) return "";
     const metaName =
-      (user as any)?.user_metadata?.name ||
-      (user as any)?.user_metadata?.full_name ||
-      (user as any)?.user_metadata?.username;
-
-    if (metaName && typeof metaName === "string") return metaName;
-
-    const email = user?.email || "";
-    if (!email) return "Account";
-    return email.includes("@") ? email.split("@")[0] : email;
+      (auth.user as any)?.user_metadata?.name ||
+      (auth.user as any)?.user_metadata?.full_name;
+    if (metaName) return String(metaName);
+    const email = auth.user.email || "";
+    return email.includes("@") ? email.split("@")[0] : email || "Account";
   }, [auth.user]);
 
-  return (
-    <nav className="sticky top-0 z-50 bg-cream/90 border-b border-gold">
+  const avatarLetter = useMemo(() => {
+    const base = displayName || auth.user?.email || "";
+    return (base.trim()[0] || "U").toUpperCase();
+  }, [displayName, auth.user]);
 
+  // close dropdown when clicking outside
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  return (
+    <nav className="sticky top-0 z-50 bg-cream/95 border-b border-gold shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        <button
-          className="brand-logo text-3xl text-brown"
-          onClick={() => scrollTo("home")}
-        >
+        <button className="brand-logo text-3xl text-brown" onClick={() => scrollTo("home")}>
           Konaseema Foods
         </button>
 
         <div className="hidden md:flex gap-8 font-semibold">
-          <button className="hover:text-gold" onClick={() => scrollTo("home")}>
-            Home
-          </button>
-          <button
-            className="hover:text-gold"
-            onClick={() => scrollTo("categories")}
-          >
-            Categories
-          </button>
-          <button
-            className="hover:text-gold"
-            onClick={() => scrollTo("products")}
-          >
-            Products
-          </button>
-          <button className="hover:text-gold" onClick={() => scrollTo("about")}>
-            About
-          </button>
-          <button
-            className="hover:text-gold"
-            onClick={() => scrollTo("contact")}
-          >
-            Contact
-          </button>
+          <button className="hover:text-gold" onClick={() => scrollTo("home")}>Home</button>
+          <button className="hover:text-gold" onClick={() => scrollTo("categories")}>Categories</button>
+          <button className="hover:text-gold" onClick={() => scrollTo("products")}>Products</button>
+          <button className="hover:text-gold" onClick={() => scrollTo("about")}>About</button>
+          <button className="hover:text-gold" onClick={() => scrollTo("contact")}>Contact</button>
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Auth button: Login -> Profile + Logout */}
+          {/* Auth: Login -> Avatar dropdown */}
           {!auth.user ? (
             <button
-              className="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-full border border-gold bg-white/50 hover:bg-white/70 transition"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-gold bg-white/60 hover:bg-white/80 transition"
               onClick={() => setAuthOpen(true)}
               aria-label="Login"
               type="button"
@@ -82,28 +71,36 @@ export default function Navbar() {
               <span className="text-sm font-semibold">Login</span>
             </button>
           ) : (
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="relative" ref={menuRef}>
               <button
                 type="button"
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-gold bg-white/50 hover:bg-white/70 transition"
-                onClick={() => setAuthOpen(true)}
-                aria-label="Profile"
+                onClick={() => setMenuOpen((v) => !v)}
+                className="w-10 h-10 rounded-full border border-gold bg-white/60 hover:bg-white/80 transition flex items-center justify-center font-bold text-brown"
+                aria-label="Open profile menu"
                 title={auth.user.email || "Account"}
               >
-                <User size={16} />
-                <span className="text-sm font-semibold max-w-[140px] truncate">
-                  {displayName}
-                </span>
+                {avatarLetter}
               </button>
 
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-gold bg-white/50 hover:bg-white/70 transition"
-                onClick={() => auth.signOut()}
-                aria-label="Logout"
-              >
-                <span className="text-sm font-semibold">Logout</span>
-              </button>
+              {menuOpen && (
+                <div className="absolute right-0 mt-3 w-56 rounded-2xl border border-gold bg-[#fffaf2] shadow-xl p-2">
+                  <div className="px-3 py-2">
+                    <div className="text-sm font-semibold truncate">{displayName}</div>
+                    <div className="text-xs opacity-70 truncate">{auth.user.email}</div>
+                  </div>
+                  <div className="h-px bg-gold/40 my-2" />
+                  <button
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/70 transition text-sm font-semibold"
+                    onClick={async () => {
+                      setMenuOpen(false);
+                      await auth.signOut();
+                    }}
+                    type="button"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           )}
 
