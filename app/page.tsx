@@ -16,10 +16,11 @@ export default function HomePage() {
     <>
       <Navbar />
 
-      {/* ✅ THIS IS WHAT MAKES THE SITE FEEL BRIGHT/PREMIUM */}
+      {/* ✅ Dominant first-screen section */}
       <Hero />
 
-      <main>
+      {/* ✅ Everything starts below the fold */}
+      <main className="pt-6">
         <Categories active={activeCategory} setActive={setActiveCategory} />
         <Products activeCategory={activeCategory} />
         <About />
