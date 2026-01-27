@@ -6,157 +6,91 @@ import { useCart } from "./CartContext";
 
 export default function Hero() {
   const cart = useCart();
+
   const special = PRODUCTS[0];
 
   return (
-    <section
-      id="home"
-      style={{
-        background: "#FFFFFF",          // HARD bright
-        color: "#0B0B0B",               // HARD dark
-        minHeight: "92vh",
-        padding: "48px 24px 40px 24px",
-        opacity: 1,
-        filter: "none",
-      }}
-    >
-      <div style={{ maxWidth: 1120, margin: "0 auto" }}>
+    <section id="home" className="relative pt-20 pb-14 px-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <motion.div
-          initial={{ opacity: 0, y: 26 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr",
-            gap: 28,
-          }}
         >
-          <div style={{ maxWidth: 720 }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 10,
-                borderRadius: 999,
-                border: "1px solid #B08D57",
-                padding: "10px 14px",
-                background: "#FFF7E8",
-                fontWeight: 700,
-                fontSize: 13,
-              }}
+          <p className="text-gold font-semibold tracking-wide mb-3">
+            Traditional • Hygienic • Fresh
+          </p>
+
+          <h1 className="text-5xl md:text-6xl leading-[1.05] mb-6">
+            Authentic <span className="text-gold">Konaseema</span> Sweets
+          </h1>
+
+          <p className="text-lg opacity-80 mb-8 max-w-xl">
+            Classic recipes from Konaseema — made with pure ingredients and packed carefully for delivery.
+          </p>
+
+          <div className="flex flex-wrap gap-4">
+            <a className="btn-primary" href="#products">
+              Shop Products
+            </a>
+
+            {/* WhatsApp = contact only */}
+            <a
+              className="btn-primary bg-green-700 hover:bg-green-800"
+              href="https://wa.me/917989301401"
+              target="_blank"
+              rel="noreferrer"
             >
-              <span style={{ color: "#B08D57" }}>Premium</span>
-              <span style={{ opacity: 0.75 }}>Konaseema Foods</span>
-            </div>
-
-            <h1
-              style={{
-                marginTop: 18,
-                fontSize: 56,
-                lineHeight: 1.05,
-                fontWeight: 800,
-                letterSpacing: "-0.02em",
-              }}
-            >
-              This section must look
-              <br />
-              <span style={{ color: "#B08D57" }}>bright</span> on any screen.
-            </h1>
-
-            <p style={{ marginTop: 14, fontSize: 18, opacity: 0.85 }}>
-              If this area still feels dull, it’s not your website CSS anymore — it’s your
-              browser/display settings affecting color output.
-            </p>
-
-            <div style={{ marginTop: 18, display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <a
-                href="#products"
-                style={{
-                  background: "#0B0B0B",
-                  color: "#FFFFFF",
-                  padding: "12px 18px",
-                  borderRadius: 14,
-                  fontWeight: 700,
-                  textDecoration: "none",
-                }}
-              >
-                Explore Products
-              </a>
-
-              <a
-                href="https://wa.me/917989301401"
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  background: "#FFFFFF",
-                  color: "#0B0B0B",
-                  padding: "12px 18px",
-                  borderRadius: 14,
-                  fontWeight: 700,
-                  border: "1px solid #B08D57",
-                  textDecoration: "none",
-                }}
-              >
-                Contact on WhatsApp
-              </a>
-            </div>
+              Contact on WhatsApp
+            </a>
           </div>
 
-          {/* feature card */}
-          <div
-            style={{
-              background: "#FFFFFF",
-              border: "1px solid #B08D57",
-              borderRadius: 18,
-              boxShadow: "0 18px 50px rgba(0,0,0,0.12)",
-              overflow: "hidden",
-            }}
-          >
-            <div style={{ padding: 18, display: "flex", justifyContent: "space-between", gap: 12 }}>
+          <div className="mt-10 flex gap-6 opacity-80">
+            <div>
+              <div className="text-2xl font-bold">Fresh</div>
+              <div className="text-sm">Packed Daily</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold">Pan-India</div>
+              <div className="text-sm">Shipping</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold">Premium</div>
+              <div className="text-sm">Gift Boxes</div>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7 }}
+        >
+          <div className="premium-card p-6">
+            <div className="flex items-center justify-between mb-4">
               <div>
-                <div style={{ fontSize: 13, fontWeight: 800, color: "#B08D57" }}>
-                  Today’s Special
-                </div>
-                <div style={{ marginTop: 8, fontSize: 24, fontWeight: 800 }}>
-                  {special?.name}
-                </div>
-                <div style={{ marginTop: 4, opacity: 0.75 }}>{special?.weight}</div>
+                <div className="text-sm text-gold font-semibold">Our Special Item</div>
+                <h3 className="text-3xl mt-1">{special?.name}</h3>
+                <div className="opacity-75 mt-1">{special?.weight}</div>
               </div>
-              <div style={{ fontSize: 22, fontWeight: 900 }}>₹{special?.price}</div>
+              <div className="text-2xl font-bold">₹{special?.price}</div>
             </div>
 
-            <div style={{ borderTop: "1px solid #F0E3CD" }}>
-              <img
-                src={special?.image}
-                alt={special?.name}
-                style={{ width: "100%", height: 320, objectFit: "cover", display: "block" }}
-              />
-            </div>
+            <img
+              src={special?.image}
+              alt={special?.name}
+              className="w-full rounded-xl object-cover h-56"
+            />
 
-            <div style={{ padding: 18 }}>
-              <button
-                onClick={() => cart.add(special)}
-                style={{
-                  width: "100%",
-                  background: "#0B0B0B",
-                  color: "#FFFFFF",
-                  padding: "12px 16px",
-                  borderRadius: 14,
-                  fontWeight: 800,
-                  border: "none",
-                  cursor: "pointer",
-                }}
-              >
+            <div className="mt-5">
+              <button className="btn-primary w-full" onClick={() => cart.add(special)}>
                 Add to Cart
               </button>
-              <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>
-                (Checkout happens from Cart)
-              </div>
             </div>
-          </div>
 
-          <div style={{ textAlign: "center", marginTop: 6, fontWeight: 700, opacity: 0.75 }}>
-            Scroll down ↓
+            <div className="text-xs opacity-60 mt-3">
+              Checkout happens from Cart.
+            </div>
           </div>
         </motion.div>
       </div>
