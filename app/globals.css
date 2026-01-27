@@ -6,8 +6,6 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-inter);
-  background: #ffffff;
-  color: #2d1a10;
 }
 
 h1, h2, h3 {
@@ -18,8 +16,46 @@ h1, h2, h3 {
   font-family: var(--font-greatvibes);
 }
 
+/* =========================
+   ✅ PREMIUM WATERMARK BG
+   File MUST exist at:
+   /public/brand-watermark.png
+========================= */
+.site-bg {
+  min-height: 100vh;
+  position: relative;
+  background: #fffaf2; /* premium cream base */
+  overflow: hidden;
+}
+
+/* Watermark layer (no square look if png has transparency) */
+.site-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("/brand-watermark.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: min(540px, 86vw);
+  opacity: 0.06;               /* premium watermark */
+  pointer-events: none;
+  z-index: 0;
+  filter: saturate(1.05) contrast(1.05); /* makes gold pop slightly */
+}
+
+/* Bright overlay layer (THIS prevents dull UI) */
+.site-overlay {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  background: rgba(255, 250, 242, 0.94); /* brighter cream overlay */
+}
+
+/* =========================
+   COMPONENT STYLES
+========================= */
 .premium-card {
-  background: #ffffff;
+  background: #fffaf2;
   border: 1px solid #c9a45c;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
@@ -41,5 +77,5 @@ h1, h2, h3 {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  filter: brightness(1.02);
+  filter: brightness(1.03);
 }
