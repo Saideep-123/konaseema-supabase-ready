@@ -5,7 +5,12 @@ import Providers from "./providers";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
-const greatVibes = Great_Vibes({ subsets: ["latin"], variable: "--font-greatvibes", weight: "400", display: "swap" });
+const greatVibes = Great_Vibes({
+  subsets: ["latin"],
+  variable: "--font-greatvibes",
+  weight: "400",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Konaseema Foods",
@@ -15,7 +20,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable} ${greatVibes.variable}`}>
-      <body className="min-h-screen">
+      {/* ✅ back to OLD theme */}
+      <body className="bg-cream text-brown min-h-screen">
         <Providers>{children}</Providers>
       </body>
     </html>
