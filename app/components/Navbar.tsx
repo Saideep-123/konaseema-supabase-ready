@@ -45,7 +45,8 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="sticky top-0 z-50 bg-cream/95 border-b border-gold shadow-sm">
+    <nav className="sticky top-0 z-50 bg-cream border-b border-gold shadow-sm">
+
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
         <button className="brand-logo text-3xl text-brown" onClick={() => scrollTo("home")}>
           Konaseema Foods
