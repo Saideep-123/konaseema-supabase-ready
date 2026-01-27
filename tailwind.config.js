@@ -7,16 +7,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        /* 🔥 FIXED: BRIGHT PREMIUM COLORS */
-        cream: "#FFF8EE",      // bright warm cream (NOT dull)
-        brown: "#2B1A12",      // deep readable brown
-        gold: "#C9A45C",       // premium gold
-      },
-      boxShadow: {
-        premium: "0 14px 30px rgba(0,0,0,0.12)",
-      },
-      borderRadius: {
-        xl: "16px",
+        cream: "#F8F5F0",     // Soft premium cream
+        brown: "#111111",     // Near-black text (high contrast)
+        primary: "#1C1C1C",   // Charcoal (modern premium)
+        gold: "#B08D57",      // Warm luxury gold
       },
     },
   },
