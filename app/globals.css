@@ -2,34 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 
-html { scroll-behavior: smooth; }
+/* =========================================
+   BASE
+========================================= */
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   font-family: var(--font-inter);
-  /* ✅ DO NOT set background/color here
-     Old site used Tailwind bg-cream + text-brown from layout.tsx */
+  /* Background & text colors are controlled
+     via Tailwind in layout.tsx — DO NOT set here */
 }
 
-h1, h2, h3 {
+/* =========================================
+   TYPOGRAPHY (PREMIUM & CONSISTENT)
+========================================= */
+h1,
+h2,
+h3 {
   font-family: var(--font-playfair);
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 48px;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 36px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+p {
+  font-size: 14px;
 }
 
 .brand-logo {
   font-family: var(--font-greatvibes);
 }
 
+/* =========================================
+   PREMIUM CARD (UNCHANGED + SAFE)
+========================================= */
 .premium-card {
   background: #fffaf2;
   border: 1px solid #c9a45c;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
   transition: all 0.3s ease;
+  position: relative;
+  pointer-events: auto;
 }
 
 .premium-card:hover {
   transform: translateY(-6px);
 }
 
+/* =========================================
+   BUTTON
+========================================= */
 .btn-primary {
   background: #1f3a2a;
   color: white;
@@ -42,4 +80,62 @@ h1, h2, h3 {
 .btn-primary:hover {
   transform: translateY(-2px);
   filter: brightness(0.98);
+}
+
+/* =========================================
+   PRODUCT GRID (CRITICAL FIX)
+   → Restores neat, dense layout
+========================================= */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+@media (min-width: 640px) {
+  .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+/* =========================================
+   PRODUCT CARD SIZING (NO ZOOM)
+========================================= */
+.product-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.product-title {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.product-price {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* =========================================
+   CLICKABILITY FIX (IMPORTANT)
+   → Prevent overlays blocking clicks
+========================================= */
+.motion-overlay,
+.overlay,
+[data-overlay="true"] {
+  pointer-events: none !important;
 }
