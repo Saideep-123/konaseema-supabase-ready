@@ -8,13 +8,14 @@ html {
 
 body {
   font-family: var(--font-inter);
+  background: #fffaf2; /* bright cream */
+  color: #2b1a12;      /* dark brown for contrast */
 }
 
 /* Headings */
-h1,
-h2,
-h3 {
+h1, h2, h3 {
   font-family: var(--font-playfair);
+  color: #1f130c;
 }
 
 /* Brand logo */
@@ -22,30 +23,29 @@ h3 {
   font-family: var(--font-greatvibes);
 }
 
-/* Premium cards */
+/* Cards */
 .premium-card {
-  background: #fffaf2;
-  border: 1px solid #c9a45c;
+  background: #ffffff;
+  border: 1px solid #d6b56a;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .premium-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
 }
 
-/* Primary buttons */
+/* Buttons */
 .btn-primary {
   background: #1f3a2a;
   color: #ffffff;
-  padding: 10px 16px;
+  padding: 12px 18px;
   border-radius: 14px;
   font-weight: 600;
-  transition: all 0.25s ease;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  filter: brightness(1);
+  filter: brightness(1.05);
 }
