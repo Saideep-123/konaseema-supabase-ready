@@ -38,14 +38,14 @@ export default function RootLayout({
       className={`${inter.variable} ${playfair.variable} ${greatVibes.variable}`}
     >
       <body
-        // ✅ HARD FORCE: background will change even if Tailwind cache is stuck
         style={{
-          backgroundColor: "#FFF6E8", // bright premium cream
-          color: "#1C1C1C",           // charcoal text
-          opacity: 1,
-          filter: "none",
+          backgroundColor: "#FFF6E8", // BRIGHT cream
+          color: "#1C1C1C",
+          minHeight: "100vh",
         }}
       >
+        {/* ❌ NO site-bg */}
+        {/* ❌ NO site-overlay */}
         <Providers>{children}</Providers>
       </body>
     </html>
