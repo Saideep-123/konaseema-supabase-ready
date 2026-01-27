@@ -13,6 +13,7 @@ const greatVibes = Great_Vibes({
 
 export const metadata: Metadata = {
   title: "Konaseema Foods",
+  description: "Authentic Konaseema sweets & snacks",
 };
 
 export default function RootLayout({
@@ -25,27 +26,8 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${playfair.variable} ${greatVibes.variable}`}
     >
-      <body
-        style={{
-          backgroundColor: "#FFF8EE",
-          color: "#2B1A12",
-          opacity: 1,
-          filter: "none",
-        }}
-      >
-        <Providers>
-          {/* HARD RESET WRAPPER */}
-          <div
-            style={{
-              minHeight: "100vh",
-              backgroundColor: "#FFF8EE",
-              opacity: 1,
-              filter: "none",
-            }}
-          >
-            {children}
-          </div>
-        </Providers>
+      <body className="bg-cream text-brown">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
