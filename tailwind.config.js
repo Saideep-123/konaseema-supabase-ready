@@ -7,12 +7,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        /* OPTION 3 – PREMIUM */
-        cream: "#F8F5F0",       // page background
-        brown: "#1C1C1C",       // main text / headings
-        muted: "#2B2B2B",       // secondary text
-        gold: "#B08D57",        // accent / borders
-        card: "#FFFFFF",        // card background
+        /* PREMIUM – BRIGHTER (fix dull look) */
+        cream: "#FFFDF6",   // ✅ brighter, more “premium bright”
+        brown: "#1C1C1C",
+        muted: "#2B2B2B",
+        gold: "#B08D57",
+        card: "#FFFFFF",
       },
     },
   },
