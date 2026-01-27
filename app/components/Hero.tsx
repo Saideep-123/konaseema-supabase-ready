@@ -7,7 +7,6 @@ import { useCart } from "./CartContext";
 export default function Hero() {
   const cart = useCart();
 
-  // Pick a special product (you can change to any id later)
   const special = PRODUCTS.find((p) => p.id === "p1") ?? PRODUCTS[0];
 
   return (
@@ -34,12 +33,15 @@ export default function Hero() {
             <a className="btn-primary" href="#products">
               Shop Products
             </a>
+
+            {/* ✅ WhatsApp is CONTACT ONLY (not ordering from here) */}
             <a
               className="btn-primary bg-green-700 hover:bg-green-800"
               href="https://wa.me/917989301401"
               target="_blank"
+              rel="noreferrer"
             >
-              Order on WhatsApp
+              Contact on WhatsApp
             </a>
           </div>
 
@@ -81,20 +83,14 @@ export default function Hero() {
               className="w-full rounded-xl object-cover h-56"
             />
 
-            <div className="mt-5 flex gap-3">
+            <div className="mt-5">
               <button className="btn-primary w-full" onClick={() => cart.add(special)}>
                 Add to Cart
               </button>
+            </div>
 
-              <a
-                className="btn-primary w-full bg-green-700 hover:bg-green-800 text-center"
-                target="_blank"
-                href={`https://wa.me/917989301401?text=${encodeURIComponent(
-                  `Hi Konaseema Foods, I want to order: ${special.name} (${special.weight}) - ₹${special.price}`
-                )}`}
-              >
-                WhatsApp
-              </a>
+            <div className="text-xs opacity-60 mt-3">
+              Checkout happens from Cart (order details + payment step later).
             </div>
           </div>
         </motion.div>
