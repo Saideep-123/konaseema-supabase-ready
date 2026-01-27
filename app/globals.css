@@ -16,44 +16,6 @@ h1, h2, h3 {
   font-family: var(--font-greatvibes);
 }
 
-/* =========================
-   ✅ PREMIUM WATERMARK BG
-   File MUST exist at:
-   /public/brand-watermark.png
-========================= */
-.site-bg {
-  min-height: 100vh;
-  position: relative;
-  background: #fffaf2; /* premium cream base */
-  overflow: hidden;
-}
-
-/* Watermark layer (no square look if png has transparency) */
-.site-bg::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background-image: url("/brand-watermark.png");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: min(540px, 86vw);
-  opacity: 0.06;               /* premium watermark */
-  pointer-events: none;
-  z-index: 0;
-  filter: saturate(1.05) contrast(1.05); /* makes gold pop slightly */
-}
-
-/* Bright overlay layer (THIS prevents dull UI) */
-.site-overlay {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  background: rgba(255, 250, 242, 0.94); /* brighter cream overlay */
-}
-
-/* =========================
-   COMPONENT STYLES
-========================= */
 .premium-card {
   background: #fffaf2;
   border: 1px solid #c9a45c;
@@ -67,7 +29,7 @@ h1, h2, h3 {
 }
 
 .btn-primary {
-  background: #24513a;
+  background: #1f3a2a;
   color: white;
   padding: 10px 16px;
   border-radius: 14px;
@@ -77,5 +39,41 @@ h1, h2, h3 {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  filter: brightness(1.03);
+  filter: brightness(0.98);
+}
+
+/* =========================================
+   ✅ PREMIUM WATERMARK BACKGROUND (FIX)
+   Uses: /public/brand-watermark.png
+   Makes UI bright (not dull) with overlay
+========================================= */
+
+.site-bg {
+  min-height: 100vh;
+  position: relative;
+  background: #fffaf2; /* same premium cream */
+  overflow: hidden;
+}
+
+/* Watermark layer */
+.site-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("/brand-watermark.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: min(540px, 86vw);
+  opacity: 0.07;                 /* watermark strength */
+  pointer-events: none;
+  z-index: 0;
+  filter: saturate(1.06) contrast(1.06);
+}
+
+/* Bright overlay to prevent dullness */
+.site-overlay {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  background: rgba(255, 250, 242, 0.94);
 }
