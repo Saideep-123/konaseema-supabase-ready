@@ -18,13 +18,17 @@ export default function CartDrawer() {
     <div className={`fixed inset-0 z-50 ${cart.isOpen ? "" : "pointer-events-none"}`}>
       <div className="absolute inset-0 bg-black/40" onClick={cart.close} />
 
-      <div className={`absolute right-0 top-0 h-full w-full sm:w-[420px] bg-[#fffaf2] shadow-xl transition-transform ${cart.isOpen ? "translate-x-0" : "translate-x-full"}`}>
+      <div
+        className={`absolute right-0 top-0 h-full w-full sm:w-[420px] bg-[#fffaf2] shadow-xl flex flex-col transition-transform ${
+          cart.isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
         <div className="flex justify-between p-5 border-b border-gold">
           <h3 className="text-xl font-semibold">Your Cart</h3>
           <button onClick={cart.close}><X /></button>
         </div>
 
-        <div className="p-5 space-y-4 overflow-y-auto h-[calc(100%-160px)]">
+        <div className="flex-1 p-5 space-y-4 overflow-y-auto">
           {cart.items.map((i) => (
             <div key={i.id} className="premium-card p-4">
               <div className="font-semibold">{i.name}</div>
