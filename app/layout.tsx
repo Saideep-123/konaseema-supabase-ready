@@ -33,15 +33,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.variable} ${playfair.variable} ${greatVibes.variable} bg-cream text-brown`}
-      >
-        <div className="site-bg">
-          <div className="site-overlay">
-            <Providers>{children}</Providers>
-          </div>
-        </div>
+    <html
+      lang="en"
+      className={`${inter.variable} ${playfair.variable} ${greatVibes.variable}`}
+    >
+      <body className="bg-cream text-brown">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
