@@ -1,111 +1,100 @@
 "use client";
 
-import { X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-
-type Product = {
-  id: number | string;
-  name: string;
-  price: number;
-  weight?: string;
-  desc?: string;
-  image?: string;
-  category?: string;
-};
+import { useEffect } from "react";
 
 export default function ProductQuickView({
-  open,
   product,
   onClose,
   onAdd,
 }: {
-  open: boolean;
-  product: Product | null;
+  product: any;
   onClose: () => void;
-  onAdd: (qty: number) => void;
+  onAdd: () => void;
 }) {
-  const [qty, setQty] = useState(1);
-
-  useEffect(() => {
-    if (open) setQty(1);
-  }, [open, product?.id]);
-
-  // ESC close
+  // ESC closes modal
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
-    if (open) window.addEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [onClose]);
 
-  const title = useMemo(() => product?.name ?? "", [product]);
-
-  if (!open || !product) return null;
+  if (!product) return null;
 
   return (
     <div className="fixed inset-0 z-[9999]">
-      {/* overlay */}
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      {/* Overlay (MUST be clickable to close) */}
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/50"
+        onClick={onClose}
+        aria-label="Close quick view"
+      />
 
-      {/* modal */}
-      <div className="absolute left-1/2 top-1/2 w-[92vw] max-w-3xl -translate-x-1/2 -translate-y-1/2">
-        <div className="premium-card bg-[#fffaf2] p-5 sm:p-6 shadow-2xl">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-2xl font-semibold">{title}</div>
-              <div className="text-sm opacity-70">{product.weight || ""}</div>
-            </div>
-            <button onClick={onClose} aria-label="Close">
-              <X />
-            </button>
+      {/* Modal */}
+      <div className="relative mx-auto mt-16 w-[92%] max-w-2xl premium-card overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-2">
+          {/* Image */}
+          <div className="relative aspect-[4/3] md:aspect-auto md:h-full overflow-hidden bg-cream">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
           </div>
 
-          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div className="rounded-2xl overflow-hidden border border-gold bg-white">
-              <img
-                src={product.image || "https://via.placeholder.com/800x500?text=Konaseema+Foods"}
-                alt={product.name}
-                className="w-full h-[220px] sm:h-[280px] object-cover"
-              />
-            </div>
+          {/* Content */}
+          <div className="p-6">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="text-xs text-gold font-semibold tracking-wide mb-2">
+                  {product.category}
+                </div>
 
-            <div className="space-y-4">
-              <div className="text-3xl font-bold">₹{product.price}</div>
+                {/* This uses your Playfair heading font via globals.css */}
+                <h3 className="text-2xl leading-snug">{product.name}</h3>
 
-              {product.desc && (
-                <p className="opacity-80">{product.desc}</p>
-              )}
-
-              <div className="flex items-center gap-3">
-                <button
-                  className="px-3 py-2 rounded-full border border-gold"
-                  onClick={() => setQty((q) => Math.max(1, q - 1))}
-                >
-                  -
-                </button>
-                <div className="min-w-[44px] text-center font-semibold">{qty}</div>
-                <button
-                  className="px-3 py-2 rounded-full border border-gold"
-                  onClick={() => setQty((q) => q + 1)}
-                >
-                  +
-                </button>
+                <div className="opacity-75 mt-2 text-sm">{product.weight}</div>
               </div>
 
               <button
-                className="btn-primary w-full"
-                onClick={() => {
-                  onAdd(qty);
-                  onClose();
-                }}
+                type="button"
+                onClick={onClose}
+                className="text-2xl leading-none opacity-70 hover:opacity-100"
+                aria-label="Close"
               >
+                ×
+              </button>
+            </div>
+
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-lg font-bold">₹{product.price}</div>
+            </div>
+
+            {product.desc && (
+              <p className="mt-4 opacity-80 text-sm leading-relaxed">{product.desc}</p>
+            )}
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button className="btn-primary py-2 px-4 rounded-xl text-sm" onClick={onAdd} type="button">
                 Add to Cart
               </button>
 
-              <div className="text-xs opacity-60">
-                (WhatsApp checkout happens only from Cart)
-              </div>
+              <a
+                className="btn-primary py-2 px-4 rounded-xl text-sm bg-green-700 hover:bg-green-800 text-center"
+                target="_blank"
+                rel="noreferrer"
+                href={`https://wa.me/91XXXXXXXXXX?text=${encodeURIComponent(
+                  `Hi Konaseema Foods, I want to order: ${product.name} (${product.weight}) - ₹${product.price}`
+                )}`}
+              >
+                WhatsApp
+              </a>
+            </div>
+
+            <div className="mt-3 text-xs opacity-60">
+              Tip: press <span className="font-semibold">Esc</span> to close.
             </div>
           </div>
         </div>
