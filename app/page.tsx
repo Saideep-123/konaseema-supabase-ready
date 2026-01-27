@@ -1,28 +1,30 @@
 "use client";
 
-import { useState } from "react";
 import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
 import Categories from "./components/Categories";
 import Products from "./components/Products";
-import About from "./components/About";
 import Footer from "./components/Footer";
 import CartDrawer from "./components/CartDrawer";
+import { useState } from "react";
 
-export default function Home() {
+export default function HomePage() {
   const [activeCategory, setActiveCategory] = useState("All");
 
   return (
     <>
       <Navbar />
-      <CartDrawer />
-      <main>
-        <Hero />
-        <Categories active={activeCategory} setActive={setActiveCategory} />
+
+      <main id="home">
+        <Categories
+          activeCategory={activeCategory}
+          onChange={setActiveCategory}
+        />
+
         <Products activeCategory={activeCategory} />
-        <About />
-        <Footer />
       </main>
+
+      <Footer />
+      <CartDrawer />
     </>
   );
 }
