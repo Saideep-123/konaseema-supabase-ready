@@ -6,6 +6,8 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-inter);
+  background: #ffffff;
+  color: #2d1a10;
 }
 
 h1, h2, h3 {
@@ -17,7 +19,7 @@ h1, h2, h3 {
 }
 
 .premium-card {
-  background: #fffaf2;
+  background: #ffffff;
   border: 1px solid #c9a45c;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.08);
@@ -29,7 +31,7 @@ h1, h2, h3 {
 }
 
 .btn-primary {
-  background: #1f3a2a;
+  background: #24513a;
   color: white;
   padding: 10px 16px;
   border-radius: 14px;
@@ -39,5 +41,5 @@ h1, h2, h3 {
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  filter: brightness(0.98);
+  filter: brightness(1.02);
 }
