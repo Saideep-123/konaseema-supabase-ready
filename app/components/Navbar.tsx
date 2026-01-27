@@ -56,7 +56,7 @@ export default function Navbar() {
           className="brand-logo text-3xl text-brown"
           onClick={() => scrollTo("home")}
         >
-          Konaseema Foods
+          Konaseema Specials
         </button>
 
         {/* Links */}
