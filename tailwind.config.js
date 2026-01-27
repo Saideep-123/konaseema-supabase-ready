@@ -7,10 +7,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        cream: "#F8F5F0",     // Soft premium cream
-        brown: "#111111",     // Near-black text (high contrast)
-        primary: "#1C1C1C",   // Charcoal (modern premium)
-        gold: "#B08D57",      // Warm luxury gold
+        /* OPTION 3 – PREMIUM */
+        cream: "#F8F5F0",       // page background
+        brown: "#1C1C1C",       // main text / headings
+        muted: "#2B2B2B",       // secondary text
+        gold: "#B08D57",        // accent / borders
+        card: "#FFFFFF",        // card background
       },
     },
   },
