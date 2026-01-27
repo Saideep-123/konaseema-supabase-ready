@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { PRODUCTS } from "./data";
 import { useCart } from "./CartContext";
+import QuickView from "./QuickView";
 
 export default function Products({
   activeCategory,
@@ -11,6 +13,7 @@ export default function Products({
   searchQuery: string;
 }) {
   const cart = useCart();
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const filtered = PRODUCTS.filter((p) => {
     const byCategory = activeCategory === "All" || p.category === activeCategory;
@@ -23,55 +26,55 @@ export default function Products({
   });
 
   return (
-    <section className="px-6 pb-24">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-[34px] font-semibold tracking-tight mb-8">
-          Featured Products
-        </h2>
-
-        {/* RESTORED CLEAN GRID */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {filtered.map((p) => (
-            <div
-              key={p.id}
-              className="group bg-white rounded-2xl border border-[#e8dccb] hover:shadow-lg transition cursor-pointer"
-            >
-              {/* IMAGE */}
-              <div className="overflow-hidden rounded-t-2xl">
+    <>
+      <section className="px-6 pb-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="product-grid">
+            {filtered.map((p) => (
+              <div
+                key={p.id}
+                className="product-card premium-card cursor-pointer"
+                onClick={() => setSelectedProduct(p)}
+              >
                 <img
                   src={p.image}
                   alt={p.name}
-                  className="w-full h-[160px] object-cover group-hover:scale-[1.04] transition"
+                  className="product-image"
                 />
-              </div>
 
-              {/* CONTENT */}
-              <div className="p-4">
-                <h3 className="text-[15px] font-medium leading-tight">
-                  {p.name}
-                </h3>
+                <div className="p-4">
+                  <h3 className="product-title">{p.name}</h3>
+                  <p className="product-meta">{p.weight}</p>
 
-                <p className="text-[12px] text-gray-500 mt-1">
-                  {p.weight}
-                </p>
+                  <div className="product-footer">
+                    <span className="product-price">₹{p.price}</span>
 
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-[15px] font-semibold">
-                    ₹{p.price}
-                  </span>
-
-                  <button
-                    onClick={() => cart.add(p)}
-                    className="text-[12px] px-3 py-1 rounded-full border border-[#c9a36a] hover:bg-[#c9a36a] hover:text-white transition"
-                  >
-                    Add
-                  </button>
+                    {/* Prevent card click when adding */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        cart.add(p);
+                      }}
+                      className="product-add"
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* QUICK VIEW MODAL */}
+      {selectedProduct && (
+        <QuickView
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onAdd={() => cart.add(selectedProduct)}
+        />
+      )}
+    </>
   );
 }
