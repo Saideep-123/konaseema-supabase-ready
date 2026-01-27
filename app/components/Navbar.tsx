@@ -19,39 +19,47 @@ export default function Navbar() {
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  // Display name logic (safe)
   const displayName = useMemo(() => {
     if (!auth.user) return "";
-    const metaName =
+    const meta =
       (auth.user as any)?.user_metadata?.name ||
       (auth.user as any)?.user_metadata?.full_name;
-    if (metaName) return String(metaName);
+    if (meta) return String(meta);
     const email = auth.user.email || "";
-    return email.includes("@") ? email.split("@")[0] : email || "Account";
+    return email.includes("@") ? email.split("@")[0] : "Account";
   }, [auth.user]);
 
+  // Avatar first letter
   const avatarLetter = useMemo(() => {
-    const base = displayName || auth.user?.email || "";
-    return (base.trim()[0] || "U").toUpperCase();
+    const base = displayName || auth.user?.email || "U";
+    return base.trim().charAt(0).toUpperCase();
   }, [displayName, auth.user]);
 
-  // close dropdown when clicking outside
+  // Close dropdown on outside click
   useEffect(() => {
-    const onDocClick = (e: MouseEvent) => {
+    const handleClick = (e: MouseEvent) => {
       if (!menuRef.current) return;
-      if (!menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+      if (!menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
     };
-    document.addEventListener("mousedown", onDocClick);
-    return () => document.removeEventListener("mousedown", onDocClick);
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
   return (
     <nav className="sticky top-0 z-50 bg-cream border-b border-gold shadow-sm">
-
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-        <button className="brand-logo text-3xl text-brown" onClick={() => scrollTo("home")}>
+        {/* Logo */}
+        <button
+          className="brand-logo text-3xl text-brown"
+          onClick={() => scrollTo("home")}
+        >
           Konaseema Foods
         </button>
 
+        {/* Links */}
         <div className="hidden md:flex gap-8 font-semibold">
           <button className="hover:text-gold" onClick={() => scrollTo("home")}>Home</button>
           <button className="hover:text-gold" onClick={() => scrollTo("categories")}>Categories</button>
@@ -60,38 +68,40 @@ export default function Navbar() {
           <button className="hover:text-gold" onClick={() => scrollTo("contact")}>Contact</button>
         </div>
 
+        {/* Actions */}
         <div className="flex items-center gap-4">
-          {/* Auth: Login -> Avatar dropdown */}
+          {/* Auth */}
           {!auth.user ? (
             <button
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-gold bg-white/60 hover:bg-white/80 transition"
+              className="px-4 py-2 rounded-full border border-gold bg-white hover:bg-white/90 transition font-semibold text-sm"
               onClick={() => setAuthOpen(true)}
-              aria-label="Login"
               type="button"
             >
-              <span className="text-sm font-semibold">Login</span>
+              Login
             </button>
           ) : (
             <div className="relative" ref={menuRef}>
               <button
                 type="button"
                 onClick={() => setMenuOpen((v) => !v)}
-                className="w-10 h-10 rounded-full border border-gold bg-white/60 hover:bg-white/80 transition flex items-center justify-center font-bold text-brown"
-                aria-label="Open profile menu"
+                className="w-10 h-10 rounded-full border border-gold bg-white flex items-center justify-center font-bold text-brown"
+                aria-label="Profile menu"
                 title={auth.user.email || "Account"}
               >
                 {avatarLetter}
               </button>
 
               {menuOpen && (
-                <div className="absolute right-0 mt-3 w-56 rounded-2xl border border-gold bg-[#fffaf2] shadow-xl p-2">
+                <div className="absolute right-0 mt-3 w-56 rounded-2xl border border-gold bg-white shadow-xl p-2">
                   <div className="px-3 py-2">
                     <div className="text-sm font-semibold truncate">{displayName}</div>
                     <div className="text-xs opacity-70 truncate">{auth.user.email}</div>
                   </div>
+
                   <div className="h-px bg-gold/40 my-2" />
+
                   <button
-                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-white/70 transition text-sm font-semibold"
+                    className="w-full text-left px-3 py-2 rounded-xl hover:bg-cream transition text-sm font-semibold"
                     onClick={async () => {
                       setMenuOpen(false);
                       await auth.signOut();
@@ -105,7 +115,12 @@ export default function Navbar() {
             </div>
           )}
 
-          <button className="relative" onClick={cart.toggle} aria-label="Open cart">
+          {/* Cart */}
+          <button
+            className="relative"
+            onClick={cart.toggle}
+            aria-label="Open cart"
+          >
             <ShoppingCart />
             {cart.count > 0 && (
               <span className="absolute -top-2 -right-2 bg-gold text-brown text-xs font-bold rounded-full px-2 py-0.5">
@@ -114,8 +129,9 @@ export default function Navbar() {
             )}
           </button>
 
+          {/* WhatsApp Contact ONLY */}
           <a
-            aria-label="WhatsApp"
+            aria-label="WhatsApp Contact"
             className="text-green-700"
             href="https://wa.me/917989301401"
             target="_blank"
@@ -126,6 +142,7 @@ export default function Navbar() {
         </div>
       </div>
 
+      {/* Auth Modal */}
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </nav>
   );
