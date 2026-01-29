@@ -49,3 +49,24 @@ h3 {
 button {
   font-family: var(--font-inter);
 }
+
+
+/* =============================
+   Product Image Fit – FINAL
+   ============================= */
+
+.product-image-wrapper {
+  width: 100%;
+  height: 180px;              /* uniform image height */
+  overflow: hidden;
+  border-radius: 14px;
+  background-color: #f5f2ed;
+}
+
+.product-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;          /* key line */
+  object-position: center;
+  display: block;
+}
