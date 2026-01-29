@@ -59,7 +59,8 @@ export default function Products({ activeCategory, searchQuery = "" }: Props) {
                 }}
               >
                 {/* Image */}
-                <div className="relative w-full aspect-[4/3] overflow-hidden bg-cream">
+                <div className="relative w-full h-[180px] overflow-hidden bg-cream">
+
                   <img
                     src={p.image}
                     alt={p.name}
